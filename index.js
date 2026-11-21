@@ -180,42 +180,42 @@ app.get("/api/dashboard/tutor/applicants", verifyToken, verifyTutor, async (req,
   res.json(await c.applications.find({ tutorEmail: tutor.email }).sort({ appliedAt: -1 }).toArray());
 });
 
-// app.patch("/api/applications/:id/status", verifyToken, verifyTutor, async (req, res) => {
-//   const c = collections(); const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
-//   if (!["accepted", "rejected"].includes(req.body.status)) return res.status(400).json({ message: "Invalid status" });
-//   const filter = { _id: new ObjectId(req.params.id), tutorEmail: tutor.email };
-//   const result = await c.applications.updateOne(filter, { $set: { status: req.body.status }, $currentDate: { updatedAt: true } });
-//   if (!result.matchedCount) return res.status(404).json({ message: "Application not found" });
-//   const updated = await c.applications.findOne(filter);
-//   res.json(updated);
-// });
+app.patch("/api/applications/:id/status", verifyToken, verifyTutor, async (req, res) => {
+  const c = collections(); const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
+  if (!["accepted", "rejected"].includes(req.body.status)) return res.status(400).json({ message: "Invalid status" });
+  const filter = { _id: new ObjectId(req.params.id), tutorEmail: tutor.email };
+  const result = await c.applications.updateOne(filter, { $set: { status: req.body.status }, $currentDate: { updatedAt: true } });
+  if (!result.matchedCount) return res.status(404).json({ message: "Application not found" });
+  const updated = await c.applications.findOne(filter);
+  res.json(updated);
+});
 
-// app.get("/api/dashboard/stats", verifyToken, async (req, res) => {
-//   const c = collections(); const user = await c.users.findOne({ _id: new ObjectId(req.user._id) });
-//   if (req.user.role === "student") {
-//     const all = await c.applications.find({ studentEmail: user.email }).toArray();
-//     return res.json({ total: all.length, accepted: all.filter(x => x.status === "accepted").length, pending: all.filter(x => x.status === "pending").length, plan: user.plan });
-//   }
-//   if (req.user.role === "tutor") {
-//     const tuitions = await c.tuitions.find({ tutorEmail: user.email }).toArray();
-//     const applicants = await c.applications.countDocuments({ tutorEmail: user.email });
-//     return res.json({ total: tuitions.length, active: tuitions.filter(x => x.isActive && x.approvalStatus === "approved").length, applicants, plan: user.plan });
-//   }
-//   const users = await c.users.countDocuments(), tutors = await c.users.countDocuments({ role: "tutor" }), pending = await c.tuitions.countDocuments({ approvalStatus: "pending" }), approved = await c.tuitions.countDocuments({ approvalStatus: "approved" });
-//   const paid = await c.payments.find({ paymentStatus: "paid" }).toArray();
-//   res.json({ users, tutors, pending, approved, revenue: paid.reduce((sum, p) => sum + (p.amount || 0), 0) });
-// });
+app.get("/api/dashboard/stats", verifyToken, async (req, res) => {
+  const c = collections(); const user = await c.users.findOne({ _id: new ObjectId(req.user._id) });
+  if (req.user.role === "student") {
+    const all = await c.applications.find({ studentEmail: user.email }).toArray();
+    return res.json({ total: all.length, accepted: all.filter(x => x.status === "accepted").length, pending: all.filter(x => x.status === "pending").length, plan: user.plan });
+  }
+  if (req.user.role === "tutor") {
+    const tuitions = await c.tuitions.find({ tutorEmail: user.email }).toArray();
+    const applicants = await c.applications.countDocuments({ tutorEmail: user.email });
+    return res.json({ total: tuitions.length, active: tuitions.filter(x => x.isActive && x.approvalStatus === "approved").length, applicants, plan: user.plan });
+  }
+  const users = await c.users.countDocuments(), tutors = await c.users.countDocuments({ role: "tutor" }), pending = await c.tuitions.countDocuments({ approvalStatus: "pending" }), approved = await c.tuitions.countDocuments({ approvalStatus: "approved" });
+  const paid = await c.payments.find({ paymentStatus: "paid" }).toArray();
+  res.json({ users, tutors, pending, approved, revenue: paid.reduce((sum, p) => sum + (p.amount || 0), 0) });
+});
 
-// app.patch("/api/profile", verifyToken, async (req, res) => {
-//   const c = collections(); const allowed = {};
-//   for (const key of ["name", "phone", "bio", "image"]) if (req.body[key] !== undefined) allowed[key] = req.body[key];
-//   allowed.updatedAt = new Date();
-//   const filter = { _id: new ObjectId(req.user._id) };
-//   const result = await c.users.updateOne(filter, { $set: allowed });
-//   if (!result.matchedCount) return res.status(404).json({ message: "User not found" });
-//   const user = await c.users.findOne(filter);
-//   const { passwordHash, ...safe } = user; res.json(safe);
-// });
+app.patch("/api/profile", verifyToken, async (req, res) => {
+  const c = collections(); const allowed = {};
+  for (const key of ["name", "phone", "bio", "image"]) if (req.body[key] !== undefined) allowed[key] = req.body[key];
+  allowed.updatedAt = new Date();
+  const filter = { _id: new ObjectId(req.user._id) };
+  const result = await c.users.updateOne(filter, { $set: allowed });
+  if (!result.matchedCount) return res.status(404).json({ message: "User not found" });
+  const user = await c.users.findOne(filter);
+  const { passwordHash, ...safe } = user; res.json(safe);
+});
 
 // app.post("/api/upload/image", verifyToken, async (req, res) => {
 //   if (!process.env.IMGBB_API_KEY?.trim()) return res.status(503).json({ message: "ImgBB API key is not configured" });
