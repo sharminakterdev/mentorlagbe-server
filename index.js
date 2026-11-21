@@ -7,12 +7,12 @@ const axios = require("axios");
 const Stripe = require("stripe");
 const { MongoClient, ObjectId } = require("mongodb");
 
-// const app = express();
-// const PORT = process.env.PORT || 5000;
-// const JWT_SECRET = process.env.JWT_SECRET || "mentorlagbe-development-secret";
-// const stripe = process.env.STRIPE_SECRET_KEY?.trim()
-//   ? new Stripe(process.env.STRIPE_SECRET_KEY.trim())
-//   : null;
+const app = express();
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || "mentorlagbe-development-secret";
+const stripe = process.env.STRIPE_SECRET_KEY?.trim()
+  ? new Stripe(process.env.STRIPE_SECRET_KEY.trim())
+  : null;
 
 // app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:3000", credentials: true }));
 
