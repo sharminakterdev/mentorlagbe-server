@@ -33,54 +33,54 @@ async function connectDatabase() {
   console.log("Connected to MongoDB");
 }
 
-// async function seedDatabase() {
-//   const c = collections();
-//   if (await c.users.countDocuments() === 0) {
-//     const passwordHash = await bcrypt.hash("Mentor@123", 10);
-//     await c.users.insertMany([
-//       { name: "Admin User", email: "admin@mentorlagbe.com", passwordHash, role: "admin", plan: "pro", phone: "", bio: "Platform administrator", image: "", createdAt: new Date(), updatedAt: new Date() },
-//       { name: "Dr. Nusrat Jahan", email: "tutor@mentorlagbe.com", passwordHash, role: "tutor", plan: "pro", phone: "+8801700000001", bio: "Mathematics and science educator", image: "", createdAt: new Date(), updatedAt: new Date() },
-//       { name: "Rahim Uddin", email: "student@mentorlagbe.com", passwordHash, role: "student", plan: "free", phone: "+8801700000002", bio: "Class 10 student", image: "", createdAt: new Date(), updatedAt: new Date() },
-//     ]);
-//   }
-//   if (await c.tuitions.countDocuments() === 0) {
-//     const tutor = await c.users.findOne({ role: "tutor" });
-//     const seed = [
-//       ["Advanced Mathematics Mastery", "Mathematics", "Class 10", "Online", "Dhaka", 6000, 3, "Build strong algebra, geometry and exam problem-solving skills.", "photo-1635070041078-e363dbe005cb"],
-//       ["Physics for University Admission", "Physics", "Admission", "Offline", "Dhanmondi, Dhaka", 7500, 4, "Focused mechanics, electricity and admission preparation.", "photo-1636466497217-26a8cbeaf0aa"],
-//       ["Full Stack Web Development", "Programming", "Adult", "Online", "Remote", 9000, 3, "Learn JavaScript, React, Node.js and databases through projects.", "photo-1498050108023-c5249f4df085"],
-//       ["IELTS Speaking and Writing", "IELTS", "Adult", "Online", "Remote", 5000, 2, "Target band 7 plus through guided speaking and writing practice.", "photo-1543269865-cbf427effbad"],
-//       ["Creative English for Beginners", "English", "Class 6", "Offline", "Mirpur, Dhaka", 4000, 3, "Grammar, vocabulary and communication in a friendly format.", "photo-1544717305-2782549b5136"],
-//       ["Organic Chemistry Deep Dive", "Chemistry", "Class 12", "Online", "Remote", 7000, 3, "Concept-based organic chemistry and exam practice.", "photo-1532094349884-543bc11b234d"],
-//       ["Bangla Literature Foundation", "Bangla", "Class 9", "Offline", "Uttara, Dhaka", 3500, 2, "Literature, grammar and exam writing practice.", "photo-1456513080510-7bf3a84b82f8"],
-//       ["SAT Math Intensive", "Mathematics", "SAT", "Online", "Remote", 8000, 4, "Timed drills and strategy for a high SAT math score.", "photo-1509062522246-3755977927d7"],
-//       ["HSC Biology Crash Course", "Biology", "Class 12", "Offline", "Banani, Dhaka", 6500, 3, "Complete HSC biology with diagrams and model tests.", "photo-1532187863486-abf9dbad1b69"],
-//       ["Python for Young Coders", "Programming", "Class 8", "Online", "Remote", 4500, 2, "A friendly introduction to Python and coding logic.", "photo-1515879218367-8466d910aaa4"],
-//       ["Accounting Fundamentals", "Accounting", "BBA", "Offline", "Mohakhali, Dhaka", 5500, 3, "Ledgers, journals and financial statements made practical.", "photo-1554224155-8d04cb21cd6c"],
-//       ["Business Studies Exam Prep", "Business Studies", "Class 10", "Online", "Remote", 3800, 2, "Clear concepts and strong board exam answer preparation.", "photo-1556761175-b413da4baf72"],
-//     ];
-//     await c.tuitions.insertMany(seed.map((x, i) => ({
-//       title: x[0], subject: x[1], classLevel: x[2], mode: x[3], location: x[4], monthlyFee: x[5], daysPerWeek: x[6],
-//       description: x[7], bannerImage: `https://images.unsplash.com/${x[8]}?auto=format&fit=crop&w=900&q=80`,
-//       tutorName: tutor?.name || "Dr. Nusrat Jahan", tutorEmail: tutor?.email || "tutor@mentorlagbe.com",
-//       approvalStatus: "approved", isActive: true, createdAt: new Date(Date.now() - i * 86400000),
-//     })));
-//   }
-// }
+async function seedDatabase() {
+  const c = collections();
+  if (await c.users.countDocuments() === 0) {
+    const passwordHash = await bcrypt.hash("Mentor@123", 10);
+    await c.users.insertMany([
+      { name: "Admin User", email: "admin@mentorlagbe.com", passwordHash, role: "admin", plan: "pro", phone: "", bio: "Platform administrator", image: "", createdAt: new Date(), updatedAt: new Date() },
+      { name: "Dr. Nusrat Jahan", email: "tutor@mentorlagbe.com", passwordHash, role: "tutor", plan: "pro", phone: "+8801700000001", bio: "Mathematics and science educator", image: "", createdAt: new Date(), updatedAt: new Date() },
+      { name: "Rahim Uddin", email: "student@mentorlagbe.com", passwordHash, role: "student", plan: "free", phone: "+8801700000002", bio: "Class 10 student", image: "", createdAt: new Date(), updatedAt: new Date() },
+    ]);
+  }
+  if (await c.tuitions.countDocuments() === 0) {
+    const tutor = await c.users.findOne({ role: "tutor" });
+    const seed = [
+      ["Advanced Mathematics Mastery", "Mathematics", "Class 10", "Online", "Dhaka", 6000, 3, "Build strong algebra, geometry and exam problem-solving skills.", "photo-1635070041078-e363dbe005cb"],
+      ["Physics for University Admission", "Physics", "Admission", "Offline", "Dhanmondi, Dhaka", 7500, 4, "Focused mechanics, electricity and admission preparation.", "photo-1636466497217-26a8cbeaf0aa"],
+      ["Full Stack Web Development", "Programming", "Adult", "Online", "Remote", 9000, 3, "Learn JavaScript, React, Node.js and databases through projects.", "photo-1498050108023-c5249f4df085"],
+      ["IELTS Speaking and Writing", "IELTS", "Adult", "Online", "Remote", 5000, 2, "Target band 7 plus through guided speaking and writing practice.", "photo-1543269865-cbf427effbad"],
+      ["Creative English for Beginners", "English", "Class 6", "Offline", "Mirpur, Dhaka", 4000, 3, "Grammar, vocabulary and communication in a friendly format.", "photo-1544717305-2782549b5136"],
+      ["Organic Chemistry Deep Dive", "Chemistry", "Class 12", "Online", "Remote", 7000, 3, "Concept-based organic chemistry and exam practice.", "photo-1532094349884-543bc11b234d"],
+      ["Bangla Literature Foundation", "Bangla", "Class 9", "Offline", "Uttara, Dhaka", 3500, 2, "Literature, grammar and exam writing practice.", "photo-1456513080510-7bf3a84b82f8"],
+      ["SAT Math Intensive", "Mathematics", "SAT", "Online", "Remote", 8000, 4, "Timed drills and strategy for a high SAT math score.", "photo-1509062522246-3755977927d7"],
+      ["HSC Biology Crash Course", "Biology", "Class 12", "Offline", "Banani, Dhaka", 6500, 3, "Complete HSC biology with diagrams and model tests.", "photo-1532187863486-abf9dbad1b69"],
+      ["Python for Young Coders", "Programming", "Class 8", "Online", "Remote", 4500, 2, "A friendly introduction to Python and coding logic.", "photo-1515879218367-8466d910aaa4"],
+      ["Accounting Fundamentals", "Accounting", "BBA", "Offline", "Mohakhali, Dhaka", 5500, 3, "Ledgers, journals and financial statements made practical.", "photo-1554224155-8d04cb21cd6c"],
+      ["Business Studies Exam Prep", "Business Studies", "Class 10", "Online", "Remote", 3800, 2, "Clear concepts and strong board exam answer preparation.", "photo-1556761175-b413da4baf72"],
+    ];
+    await c.tuitions.insertMany(seed.map((x, i) => ({
+      title: x[0], subject: x[1], classLevel: x[2], mode: x[3], location: x[4], monthlyFee: x[5], daysPerWeek: x[6],
+      description: x[7], bannerImage: `https://images.unsplash.com/${x[8]}?auto=format&fit=crop&w=900&q=80`,
+      tutorName: tutor?.name || "Dr. Nusrat Jahan", tutorEmail: tutor?.email || "tutor@mentorlagbe.com",
+      approvalStatus: "approved", isActive: true, createdAt: new Date(Date.now() - i * 86400000),
+    })));
+  }
+}
 
-// app.use(express.json({ limit: "10mb" }));
-// app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
 
-// const verifyToken = (req, res, next) => {
-//   const header = req.headers.authorization || "";
-//   const token = header.startsWith("Bearer ") ? header.slice(7) : null;
-//   if (!token) return res.status(401).json({ message: "Unauthorized" });
-//   try { req.user = jwt.verify(token, JWT_SECRET); next(); } catch { res.status(401).json({ message: "Invalid token" }); }
-// };
-// const verifyRole = (role) => (req, res, next) => req.user?.role === role ? next() : res.status(403).json({ message: `${role} access required` });
-// const verifyStudent = verifyRole("student"), verifyTutor = verifyRole("tutor"), verifyAdmin = verifyRole("admin");
+const verifyToken = (req, res, next) => {
+  const header = req.headers.authorization || "";
+  const token = header.startsWith("Bearer ") ? header.slice(7) : null;
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
+  try { req.user = jwt.verify(token, JWT_SECRET); next(); } catch { res.status(401).json({ message: "Invalid token" }); }
+};
+const verifyRole = (role) => (req, res, next) => req.user?.role === role ? next() : res.status(403).json({ message: `${role} access required` });
+const verifyStudent = verifyRole("student"), verifyTutor = verifyRole("tutor"), verifyAdmin = verifyRole("admin");
 
-// app.get("/api/health", (req, res) => res.json({ ok: true, service: "MentorLagbe API", database: "MongoDB" }));
+app.get("/api/health", (req, res) => res.json({ ok: true, service: "MentorLagbe API", database: "MongoDB" }));
 
 // app.post("/api/auth/sign-up", async (req, res) => {
 //   const { name, email, password, role = "student" } = req.body;
