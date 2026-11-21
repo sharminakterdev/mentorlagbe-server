@@ -175,10 +175,10 @@ app.delete("/api/applications/:id", verifyToken, verifyStudent, async (req, res)
   await c.applications.deleteOne({ _id: result._id }); res.json({ ok: true });
 });
 
-// app.get("/api/dashboard/tutor/applicants", verifyToken, verifyTutor, async (req, res) => {
-//   const c = collections(); const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
-//   res.json(await c.applications.find({ tutorEmail: tutor.email }).sort({ appliedAt: -1 }).toArray());
-// });
+app.get("/api/dashboard/tutor/applicants", verifyToken, verifyTutor, async (req, res) => {
+  const c = collections(); const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
+  res.json(await c.applications.find({ tutorEmail: tutor.email }).sort({ appliedAt: -1 }).toArray());
+});
 
 // app.patch("/api/applications/:id/status", verifyToken, verifyTutor, async (req, res) => {
 //   const c = collections(); const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
