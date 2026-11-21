@@ -154,16 +154,16 @@ app.delete("/api/tuitions/:id", verifyToken, async (req, res) => {
   await c.applications.deleteMany({ tuitionId: req.params.id }); res.json({ ok: true });
 });
 
-// app.post("/api/applications", verifyToken, verifyStudent, async (req, res) => {
-//   const c = collections(); const { tuitionId, studentPhone, preferredSchedule, studentNote } = req.body;
-//   const tuition = await c.tuitions.findOne({ _id: new ObjectId(tuitionId), approvalStatus: "approved", isActive: true });
-//   if (!tuition) return res.status(404).json({ message: "Tuition not found" });
-//   const existing = await c.applications.findOne({ tuitionId, studentEmail: req.user.email });
-//   if (existing) return res.status(409).json({ message: "You already applied for this tuition" });
-//   const student = await c.users.findOne({ _id: new ObjectId(req.user._id) });
-//   const application = { tuitionId, tuitionTitle: tuition.title, subject: tuition.subject, monthlyFee: tuition.monthlyFee, tutorEmail: tuition.tutorEmail, studentName: student.name, studentEmail: student.email, studentPhone, preferredSchedule, studentNote, status: "pending", appliedAt: new Date() };
-//   const result = await c.applications.insertOne(application); res.status(201).json({ ...application, _id: result.insertedId });
-// });
+app.post("/api/applications", verifyToken, verifyStudent, async (req, res) => {
+  const c = collections(); const { tuitionId, studentPhone, preferredSchedule, studentNote } = req.body;
+  const tuition = await c.tuitions.findOne({ _id: new ObjectId(tuitionId), approvalStatus: "approved", isActive: true });
+  if (!tuition) return res.status(404).json({ message: "Tuition not found" });
+  const existing = await c.applications.findOne({ tuitionId, studentEmail: req.user.email });
+  if (existing) return res.status(409).json({ message: "You already applied for this tuition" });
+  const student = await c.users.findOne({ _id: new ObjectId(req.user._id) });
+  const application = { tuitionId, tuitionTitle: tuition.title, subject: tuition.subject, monthlyFee: tuition.monthlyFee, tutorEmail: tuition.tutorEmail, studentName: student.name, studentEmail: student.email, studentPhone, preferredSchedule, studentNote, status: "pending", appliedAt: new Date() };
+  const result = await c.applications.insertOne(application); res.status(201).json({ ...application, _id: result.insertedId });
+});
 
 // app.get("/api/dashboard/student/applications", verifyToken, verifyStudent, async (req, res) => {
 //   const c = collections(); res.json(await c.applications.find({ studentEmail: req.user.email }).sort({ appliedAt: -1 }).toArray());
