@@ -134,25 +134,25 @@ app.get("/api/dashboard/tutor/tuitions", verifyToken, verifyTutor, async (req, r
   res.json(await c.tuitions.find({ tutorEmail: tutor.email }).sort({ createdAt: -1 }).toArray());
 });
 
-// app.patch("/api/tuitions/:id", verifyToken, async (req, res) => {
-//   const c = collections(); const filter = { _id: new ObjectId(req.params.id) };
-//   if (req.user.role === "tutor") { const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) }); filter.tutorEmail = tutor.email; }
-//   if (req.user.role === "student") return res.status(403).json({ message: "Forbidden" });
-//   if (req.body.approvalStatus && !["approved", "rejected", "pending"].includes(req.body.approvalStatus)) return res.status(400).json({ message: "Invalid approval status" });
-//   if (req.user.role === "tutor") delete req.body.approvalStatus;
-//   const result = await c.tuitions.updateOne(filter, { $set: { ...req.body, updatedAt: new Date() } });
-//   if (!result.matchedCount) return res.status(404).json({ message: "Tuition not found" });
-//   const updated = await c.tuitions.findOne(filter);
-//   res.json(updated);
-// });
+app.patch("/api/tuitions/:id", verifyToken, async (req, res) => {
+  const c = collections(); const filter = { _id: new ObjectId(req.params.id) };
+  if (req.user.role === "tutor") { const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) }); filter.tutorEmail = tutor.email; }
+  if (req.user.role === "student") return res.status(403).json({ message: "Forbidden" });
+  if (req.body.approvalStatus && !["approved", "rejected", "pending"].includes(req.body.approvalStatus)) return res.status(400).json({ message: "Invalid approval status" });
+  if (req.user.role === "tutor") delete req.body.approvalStatus;
+  const result = await c.tuitions.updateOne(filter, { $set: { ...req.body, updatedAt: new Date() } });
+  if (!result.matchedCount) return res.status(404).json({ message: "Tuition not found" });
+  const updated = await c.tuitions.findOne(filter);
+  res.json(updated);
+});
 
-// app.delete("/api/tuitions/:id", verifyToken, async (req, res) => {
-//   const c = collections(); const filter = { _id: new ObjectId(req.params.id) };
-//   if (req.user.role === "tutor") { const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) }); filter.tutorEmail = tutor.email; }
-//   if (req.user.role === "student") return res.status(403).json({ message: "Forbidden" });
-//   const result = await c.tuitions.deleteOne(filter); if (!result.deletedCount) return res.status(404).json({ message: "Tuition not found" });
-//   await c.applications.deleteMany({ tuitionId: req.params.id }); res.json({ ok: true });
-// });
+app.delete("/api/tuitions/:id", verifyToken, async (req, res) => {
+  const c = collections(); const filter = { _id: new ObjectId(req.params.id) };
+  if (req.user.role === "tutor") { const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) }); filter.tutorEmail = tutor.email; }
+  if (req.user.role === "student") return res.status(403).json({ message: "Forbidden" });
+  const result = await c.tuitions.deleteOne(filter); if (!result.deletedCount) return res.status(404).json({ message: "Tuition not found" });
+  await c.applications.deleteMany({ tuitionId: req.params.id }); res.json({ ok: true });
+});
 
 // app.post("/api/applications", verifyToken, verifyStudent, async (req, res) => {
 //   const c = collections(); const { tuitionId, studentPhone, preferredSchedule, studentNote } = req.body;
