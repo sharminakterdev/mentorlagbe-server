@@ -101,11 +101,11 @@ app.post("/api/auth/sign-in", async (req, res) => {
   const { passwordHash, ...safe } = user; res.json({ token, user: safe });
 });
 
-// app.get("/api/me", verifyToken, async (req, res) => {
-//   const c = collections(); const user = await c.users.findOne({ _id: new ObjectId(req.user._id) });
-//   if (!user) return res.status(404).json({ message: "User not found" });
-//   const { passwordHash, ...safe } = user; res.json(safe);
-// });
+app.get("/api/me", verifyToken, async (req, res) => {
+  const c = collections(); const user = await c.users.findOne({ _id: new ObjectId(req.user._id) });
+  if (!user) return res.status(404).json({ message: "User not found" });
+  const { passwordHash, ...safe } = user; res.json(safe);
+});
 
 // app.get("/api/tuitions", async (req, res) => {
 //   const c = collections(); const { search, subject, classLevel, mode, page = "1", limit = "12" } = req.query;
