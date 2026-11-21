@@ -118,21 +118,21 @@ app.get("/api/tuitions/:id", async (req, res) => {
   res.json({ ...tuition, tutor });
 });
 
-// app.post("/api/tuitions", verifyToken, verifyTutor, async (req, res) => {
-//   const c = collections();
-//   const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
-//   if (tutor?.plan === "free") {
-//     const count = await c.tuitions.countDocuments({ tutorEmail: tutor.email });
-//     if (count >= 2) return res.status(403).json({ message: "Free tutors can post up to 2 tuitions" });
-//   }
-//   const tuition = { ...req.body, tutorName: tutor.name, tutorEmail: tutor.email, approvalStatus: "pending", isActive: true, createdAt: new Date(), updatedAt: new Date() };
-//   const result = await c.tuitions.insertOne(tuition); res.status(201).json({ ...tuition, _id: result.insertedId });
-// });
+app.post("/api/tuitions", verifyToken, verifyTutor, async (req, res) => {
+  const c = collections();
+  const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
+  if (tutor?.plan === "free") {
+    const count = await c.tuitions.countDocuments({ tutorEmail: tutor.email });
+    if (count >= 2) return res.status(403).json({ message: "Free tutors can post up to 2 tuitions" });
+  }
+  const tuition = { ...req.body, tutorName: tutor.name, tutorEmail: tutor.email, approvalStatus: "pending", isActive: true, createdAt: new Date(), updatedAt: new Date() };
+  const result = await c.tuitions.insertOne(tuition); res.status(201).json({ ...tuition, _id: result.insertedId });
+});
 
-// app.get("/api/dashboard/tutor/tuitions", verifyToken, verifyTutor, async (req, res) => {
-//   const c = collections(); const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
-//   res.json(await c.tuitions.find({ tutorEmail: tutor.email }).sort({ createdAt: -1 }).toArray());
-// });
+app.get("/api/dashboard/tutor/tuitions", verifyToken, verifyTutor, async (req, res) => {
+  const c = collections(); const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
+  res.json(await c.tuitions.find({ tutorEmail: tutor.email }).sort({ createdAt: -1 }).toArray());
+});
 
 // app.patch("/api/tuitions/:id", verifyToken, async (req, res) => {
 //   const c = collections(); const filter = { _id: new ObjectId(req.params.id) };
