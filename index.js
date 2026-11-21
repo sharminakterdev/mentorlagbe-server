@@ -283,20 +283,20 @@ app.post("/api/stripe/verify", verifyToken, async (req, res) => {
   } catch (error) { res.status(400).json({ message: "Could not verify payment" }); }
 });
 
-// app.get("/api/admin/users", verifyToken, verifyAdmin, async (req, res) => {
-//   const c = collections(); const users = await c.users.find({}, { projection: { passwordHash: 0 } }).sort({ createdAt: -1 }).toArray(); res.json(users);
-// });
-// app.patch("/api/admin/users/:id/role", verifyToken, verifyAdmin, async (req, res) => {
-//   if (!["student", "tutor", "admin"].includes(req.body.role)) return res.status(400).json({ message: "Invalid role" });
-//   const c = collections(); await c.users.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { role: req.body.role, updatedAt: new Date() } }); res.json({ ok: true });
-// });
-// app.get("/api/admin/tuitions", verifyToken, verifyAdmin, async (req, res) => {
-//   const c = collections(); res.json(await c.tuitions.find({}).sort({ createdAt: -1 }).toArray());
-// });
-// app.get("/api/admin/transactions", verifyToken, verifyAdmin, async (req, res) => {
-//   const c = collections(); res.json(await c.payments.find({}).sort({ paidAt: -1 }).toArray());
-// });
+app.get("/api/admin/users", verifyToken, verifyAdmin, async (req, res) => {
+  const c = collections(); const users = await c.users.find({}, { projection: { passwordHash: 0 } }).sort({ createdAt: -1 }).toArray(); res.json(users);
+});
+app.patch("/api/admin/users/:id/role", verifyToken, verifyAdmin, async (req, res) => {
+  if (!["student", "tutor", "admin"].includes(req.body.role)) return res.status(400).json({ message: "Invalid role" });
+  const c = collections(); await c.users.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { role: req.body.role, updatedAt: new Date() } }); res.json({ ok: true });
+});
+app.get("/api/admin/tuitions", verifyToken, verifyAdmin, async (req, res) => {
+  const c = collections(); res.json(await c.tuitions.find({}).sort({ createdAt: -1 }).toArray());
+});
+app.get("/api/admin/transactions", verifyToken, verifyAdmin, async (req, res) => {
+  const c = collections(); res.json(await c.payments.find({}).sort({ paidAt: -1 }).toArray());
+});
 
-// connectDatabase().then(() => {
-//   app.listen(PORT, () => console.log(`MentorLagbe API listening on port ${PORT}`));
-// }).catch(error => { console.error(error.message); process.exit(1) });
+connectDatabase().then(() => {
+  app.listen(PORT, () => console.log(`MentorLagbe API listening on port ${PORT}`));
+}).catch(error => { console.error(error.message); process.exit(1) });
