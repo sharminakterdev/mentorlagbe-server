@@ -82,24 +82,24 @@ const verifyStudent = verifyRole("student"), verifyTutor = verifyRole("tutor"), 
 
 app.get("/api/health", (req, res) => res.json({ ok: true, service: "MentorLagbe API", database: "MongoDB" }));
 
-// app.post("/api/auth/sign-up", async (req, res) => {
-//   const { name, email, password, role = "student" } = req.body;
-//   if (!name || !email || password?.length < 6 || !["student", "tutor"].includes(role)) return res.status(400).json({ message: "Please provide valid name, email and password" });
-//   const c = collections(); const normalized = email.toLowerCase().trim();
-//   if (await c.users.findOne({ email: normalized })) return res.status(409).json({ message: "Email already exists" });
-//   const user = { name: name.trim(), email: normalized, passwordHash: await bcrypt.hash(password, 10), role, plan: "free", phone: "", bio: "", image: "", createdAt: new Date(), updatedAt: new Date() };
-//   const result = await c.users.insertOne(user);
-//   const token = jwt.sign({ _id: result.insertedId.toString(), email: normalized, role }, JWT_SECRET, { expiresIn: "7d" });
-//   const { passwordHash, ...safe } = user; res.status(201).json({ token, user: { ...safe, _id: result.insertedId } });
-// });
+app.post("/api/auth/sign-up", async (req, res) => {
+  const { name, email, password, role = "student" } = req.body;
+  if (!name || !email || password?.length < 6 || !["student", "tutor"].includes(role)) return res.status(400).json({ message: "Please provide valid name, email and password" });
+  const c = collections(); const normalized = email.toLowerCase().trim();
+  if (await c.users.findOne({ email: normalized })) return res.status(409).json({ message: "Email already exists" });
+  const user = { name: name.trim(), email: normalized, passwordHash: await bcrypt.hash(password, 10), role, plan: "free", phone: "", bio: "", image: "", createdAt: new Date(), updatedAt: new Date() };
+  const result = await c.users.insertOne(user);
+  const token = jwt.sign({ _id: result.insertedId.toString(), email: normalized, role }, JWT_SECRET, { expiresIn: "7d" });
+  const { passwordHash, ...safe } = user; res.status(201).json({ token, user: { ...safe, _id: result.insertedId } });
+});
 
-// app.post("/api/auth/sign-in", async (req, res) => {
-//   const { email, password } = req.body; const c = collections();
-//   const user = await c.users.findOne({ email: String(email).trim().toLowerCase() });
-//   if (!user || !await bcrypt.compare(password || "", user.passwordHash)) return res.status(401).json({ message: "Invalid email or password" });
-//   const token = jwt.sign({ _id: user._id.toString(), email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
-//   const { passwordHash, ...safe } = user; res.json({ token, user: safe });
-// });
+app.post("/api/auth/sign-in", async (req, res) => {
+  const { email, password } = req.body; const c = collections();
+  const user = await c.users.findOne({ email: String(email).trim().toLowerCase() });
+  if (!user || !await bcrypt.compare(password || "", user.passwordHash)) return res.status(401).json({ message: "Invalid email or password" });
+  const token = jwt.sign({ _id: user._id.toString(), email: user.email, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
+  const { passwordHash, ...safe } = user; res.json({ token, user: safe });
+});
 
 // app.get("/api/me", verifyToken, async (req, res) => {
 //   const c = collections(); const user = await c.users.findOne({ _id: new ObjectId(req.user._id) });
