@@ -107,23 +107,16 @@ app.get("/api/me", verifyToken, async (req, res) => {
   const { passwordHash, ...safe } = user; res.json(safe);
 });
 
-// app.get("/api/tuitions", async (req, res) => {
-//   const c = collections(); const { search, subject, classLevel, mode, page = "1", limit = "12" } = req.query;
-//   const query = { approvalStatus: "approved", isActive: true };
-//   if (search) query.$and = [{ $or: [{ title: new RegExp(search, "i") }, { subject: new RegExp(search, "i") }] }];
-//   if (subject) query.subject = subject; if (classLevel) query.classLevel = classLevel; if (mode) query.mode = mode;
-//   const p = Math.max(parseInt(page) || 1, 1), l = Math.max(parseInt(limit) || 12, 1), total = await c.tuitions.countDocuments(query);
-//   const items = await c.tuitions.find(query).sort({ createdAt: -1 }).skip((p - 1) * l).limit(l).toArray();
-//   res.json({ items, total, page: p, pages: Math.ceil(total / l) });
-// });
 
-// app.get("/api/tuitions/:id", async (req, res) => {
-//   const c = collections(); let tuition;
-//   try { tuition = await c.tuitions.findOne({ _id: new ObjectId(req.params.id) }) } catch { }
-//   if (!tuition) return res.status(404).json({ message: "Tuition not found" });
-//   const tutor = await c.users.findOne({ email: tuition.tutorEmail }, { projection: { passwordHash: 0 } });
-//   res.json({ ...tuition, tutor });
-// });
+
+
+app.get("/api/tuitions/:id", async (req, res) => {
+  const c = collections(); let tuition;
+  try { tuition = await c.tuitions.findOne({ _id: new ObjectId(req.params.id) }) } catch { }
+  if (!tuition) return res.status(404).json({ message: "Tuition not found" });
+  const tutor = await c.users.findOne({ email: tuition.tutorEmail }, { projection: { passwordHash: 0 } });
+  res.json({ ...tuition, tutor });
+});
 
 // app.post("/api/tuitions", verifyToken, verifyTutor, async (req, res) => {
 //   const c = collections();
