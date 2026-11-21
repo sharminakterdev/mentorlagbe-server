@@ -16,22 +16,22 @@ const stripe = process.env.STRIPE_SECRET_KEY?.trim()
 
 app.use(cors({ origin: process.env.CLIENT_URL || "http://localhost:3000", credentials: true }));
 
-// let db;
-// const collections = () => ({
-//   users: db.collection("users"),
-//   tuitions: db.collection("tuitions"),
-//   applications: db.collection("applications"),
-//   payments: db.collection("payments"),
-// });
+let db;
+const collections = () => ({
+  users: db.collection("users"),
+  tuitions: db.collection("tuitions"),
+  applications: db.collection("applications"),
+  payments: db.collection("payments"),
+});
 
-// async function connectDatabase() {
-//   if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI is not configured");
-//   const client = new MongoClient(process.env.MONGODB_URI);
-//   await client.connect();
-//   db = client.db("mentorlagbe");
-//   await seedDatabase();
-//   console.log("Connected to MongoDB");
-// }
+async function connectDatabase() {
+  if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI is not configured");
+  const client = new MongoClient(process.env.MONGODB_URI);
+  await client.connect();
+  db = client.db("mentorlagbe");
+  await seedDatabase();
+  console.log("Connected to MongoDB");
+}
 
 // async function seedDatabase() {
 //   const c = collections();
