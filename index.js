@@ -107,7 +107,72 @@ app.get("/api/me", verifyToken, async (req, res) => {
   const { passwordHash, ...safe } = user; res.json(safe);
 });
 
+// Get all approved and active tuitions
+app.get("/api/tuitions", async (req, res) => {
+  try {
+    const c = collections();
 
+    const {
+      search = "",
+      subject = "",
+      classLevel = "",
+      mode = "",
+      page = 1,
+      limit = 9,
+    } = req.query;
+
+    const filter = {
+      approvalStatus: "approved",
+      isActive: true,
+    };
+
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { subject: { $regex: search, $options: "i" } },
+        { tutorName: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (subject && subject !== "All subjects") {
+      filter.subject = subject;
+    }
+
+    if (classLevel && classLevel !== "All class levels") {
+      filter.classLevel = classLevel;
+    }
+
+    if (mode && mode !== "All modes") {
+      filter.mode = mode;
+    }
+
+    const currentPage = Math.max(1, Number(page) || 1);
+    const pageLimit = Math.min(50, Math.max(1, Number(limit) || 9));
+
+    const total = await c.tuitions.countDocuments(filter);
+
+    const items = await c.tuitions
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .skip((currentPage - 1) * pageLimit)
+      .limit(pageLimit)
+      .toArray();
+
+    res.json({
+      items,
+      total,
+      page: currentPage,
+      pages: Math.ceil(total / pageLimit),
+    });
+  } catch (error) {
+    console.error("Fetch tuitions error:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch tuitions",
+      detail: error.message,
+    });
+  }
+});
 
 
 app.get("/api/tuitions/:id", async (req, res) => {
