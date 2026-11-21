@@ -217,71 +217,71 @@ app.patch("/api/profile", verifyToken, async (req, res) => {
   const { passwordHash, ...safe } = user; res.json(safe);
 });
 
-// app.post("/api/upload/image", verifyToken, async (req, res) => {
-//   if (!process.env.IMGBB_API_KEY?.trim()) return res.status(503).json({ message: "ImgBB API key is not configured" });
-//   if (!req.body.image) return res.status(400).json({ message: "Image is required" });
-//   if (req.body.image.length > 8_000_000) return res.status(413).json({ message: "Image is too large. Please upload a file smaller than 8 MB." });
-//   try {
-//     const form = new URLSearchParams();
-//     form.append("key", process.env.IMGBB_API_KEY.trim());
-//     form.append("image", req.body.image);
-//     if (req.body.name) form.append("name", req.body.name);
-//     const response = await axios.post("https://api.imgbb.com/1/upload", form, {
-//       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//       timeout: 30000,
-//     });
-//     if (!response.data?.success || !response.data?.data?.url) throw new Error("ImgBB returned no image URL");
-//     res.json({ url: response.data.data.url });
-//   } catch (error) {
-//     const status = error?.response?.status;
-//     const upstream = error?.response?.data?.error?.message || error?.response?.data?.status_txt || error?.message || "Unknown upload error";
-//     console.error("ImgBB upload failed:", status || "", upstream);
-//     res.status(status === 400 ? 400 : 502).json({ message: `Image upload failed: ${upstream}` });
-//   }
-// });
+app.post("/api/upload/image", verifyToken, async (req, res) => {
+  if (!process.env.IMGBB_API_KEY?.trim()) return res.status(503).json({ message: "ImgBB API key is not configured" });
+  if (!req.body.image) return res.status(400).json({ message: "Image is required" });
+  if (req.body.image.length > 8_000_000) return res.status(413).json({ message: "Image is too large. Please upload a file smaller than 8 MB." });
+  try {
+    const form = new URLSearchParams();
+    form.append("key", process.env.IMGBB_API_KEY.trim());
+    form.append("image", req.body.image);
+    if (req.body.name) form.append("name", req.body.name);
+    const response = await axios.post("https://api.imgbb.com/1/upload", form, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      timeout: 30000,
+    });
+    if (!response.data?.success || !response.data?.data?.url) throw new Error("ImgBB returned no image URL");
+    res.json({ url: response.data.data.url });
+  } catch (error) {
+    const status = error?.response?.status;
+    const upstream = error?.response?.data?.error?.message || error?.response?.data?.status_txt || error?.message || "Unknown upload error";
+    console.error("ImgBB upload failed:", status || "", upstream);
+    res.status(status === 400 ? 400 : 502).json({ message: `Image upload failed: ${upstream}` });
+  }
+});
 
-// app.post("/api/stripe/create-checkout", verifyToken, async (req, res) => {
-//   if (!stripe) return res.status(503).json({ message: "Stripe is not configured" });
-//   const c = collections(); const user = await c.users.findOne({ _id: new ObjectId(req.user._id) });
-//   if (!user) return res.status(404).json({ message: "User not found" });
-//   const amount = user.role === "tutor" ? 1500 : 1000;
-//   try {
-//     const session = await stripe.checkout.sessions.create({
-//       mode: "payment",
-//       line_items: [{
-//         price_data: {
-//           currency: "usd",
-//           unit_amount: amount,
-//           product_data: { name: `MentorLagbe Pro - ${user.role}` }
-//         },
-//         quantity: 1
-//       }],
-//       success_url: `${process.env.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-//       cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
-//       metadata: { userId: user._id.toString(), role: user.role }
-//     });
-//     res.json({ url: session.url });
-//   } catch (error) {
-//     console.error("Stripe checkout failed:", error?.type || "", error?.code || "", error?.message || error);
-//     res.status(500).json({
-//       message: "Could not create checkout session",
-//       detail: error?.message || "Stripe rejected the checkout request"
-//     });
-//   }
-// });
+app.post("/api/stripe/create-checkout", verifyToken, async (req, res) => {
+  if (!stripe) return res.status(503).json({ message: "Stripe is not configured" });
+  const c = collections(); const user = await c.users.findOne({ _id: new ObjectId(req.user._id) });
+  if (!user) return res.status(404).json({ message: "User not found" });
+  const amount = user.role === "tutor" ? 1500 : 1000;
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          unit_amount: amount,
+          product_data: { name: `MentorLagbe Pro - ${user.role}` }
+        },
+        quantity: 1
+      }],
+      success_url: `${process.env.CLIENT_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
+      metadata: { userId: user._id.toString(), role: user.role }
+    });
+    res.json({ url: session.url });
+  } catch (error) {
+    console.error("Stripe checkout failed:", error?.type || "", error?.code || "", error?.message || error);
+    res.status(500).json({
+      message: "Could not create checkout session",
+      detail: error?.message || "Stripe rejected the checkout request"
+    });
+  }
+});
 
-// app.post("/api/stripe/verify", verifyToken, async (req, res) => {
-//   if (!stripe || !req.body.sessionId) return res.status(400).json({ message: "Invalid session" });
-//   try {
-//     const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
-//     if (session.payment_status !== "paid") return res.status(400).json({ message: "Payment not completed" });
-//     const c = collections(); const userId = session.metadata.userId;
-//     await c.users.updateOne({ _id: new ObjectId(userId) }, { $set: { plan: "pro", updatedAt: new Date() } });
-//     const paidUser = await c.users.findOne({ _id: new ObjectId(userId) });
-//     await c.payments.updateOne({ stripeSessionId: session.id }, { $set: { userEmail: paidUser?.email || session.customer_details?.email || "", userName: paidUser?.name || "", userRole: session.metadata.role || paidUser?.role || "", planName: "Pro", amount: (session.amount_total || 0) / 100, currency: session.currency, transactionId: session.payment_intent?.toString() || session.id, stripeSessionId: session.id, paymentStatus: "paid", paidAt: new Date() } }, { upsert: true });
-//     res.json({ ok: true });
-//   } catch (error) { res.status(400).json({ message: "Could not verify payment" }); }
-// });
+app.post("/api/stripe/verify", verifyToken, async (req, res) => {
+  if (!stripe || !req.body.sessionId) return res.status(400).json({ message: "Invalid session" });
+  try {
+    const session = await stripe.checkout.sessions.retrieve(req.body.sessionId);
+    if (session.payment_status !== "paid") return res.status(400).json({ message: "Payment not completed" });
+    const c = collections(); const userId = session.metadata.userId;
+    await c.users.updateOne({ _id: new ObjectId(userId) }, { $set: { plan: "pro", updatedAt: new Date() } });
+    const paidUser = await c.users.findOne({ _id: new ObjectId(userId) });
+    await c.payments.updateOne({ stripeSessionId: session.id }, { $set: { userEmail: paidUser?.email || session.customer_details?.email || "", userName: paidUser?.name || "", userRole: session.metadata.role || paidUser?.role || "", planName: "Pro", amount: (session.amount_total || 0) / 100, currency: session.currency, transactionId: session.payment_intent?.toString() || session.id, stripeSessionId: session.id, paymentStatus: "paid", paidAt: new Date() } }, { upsert: true });
+    res.json({ ok: true });
+  } catch (error) { res.status(400).json({ message: "Could not verify payment" }); }
+});
 
 // app.get("/api/admin/users", verifyToken, verifyAdmin, async (req, res) => {
 //   const c = collections(); const users = await c.users.find({}, { projection: { passwordHash: 0 } }).sort({ createdAt: -1 }).toArray(); res.json(users);
