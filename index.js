@@ -165,9 +165,9 @@ app.post("/api/applications", verifyToken, verifyStudent, async (req, res) => {
   const result = await c.applications.insertOne(application); res.status(201).json({ ...application, _id: result.insertedId });
 });
 
-// app.get("/api/dashboard/student/applications", verifyToken, verifyStudent, async (req, res) => {
-//   const c = collections(); res.json(await c.applications.find({ studentEmail: req.user.email }).sort({ appliedAt: -1 }).toArray());
-// });
+app.get("/api/dashboard/student/applications", verifyToken, verifyStudent, async (req, res) => {
+  const c = collections(); res.json(await c.applications.find({ studentEmail: req.user.email }).sort({ appliedAt: -1 }).toArray());
+});
 
 // app.delete("/api/applications/:id", verifyToken, verifyStudent, async (req, res) => {
 //   const c = collections(); const result = await c.applications.findOne({ _id: new ObjectId(req.params.id), studentEmail: req.user.email, status: "pending" });
