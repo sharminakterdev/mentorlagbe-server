@@ -169,11 +169,11 @@ app.get("/api/dashboard/student/applications", verifyToken, verifyStudent, async
   const c = collections(); res.json(await c.applications.find({ studentEmail: req.user.email }).sort({ appliedAt: -1 }).toArray());
 });
 
-// app.delete("/api/applications/:id", verifyToken, verifyStudent, async (req, res) => {
-//   const c = collections(); const result = await c.applications.findOne({ _id: new ObjectId(req.params.id), studentEmail: req.user.email, status: "pending" });
-//   if (!result) return res.status(404).json({ message: "Pending application not found" });
-//   await c.applications.deleteOne({ _id: result._id }); res.json({ ok: true });
-// });
+app.delete("/api/applications/:id", verifyToken, verifyStudent, async (req, res) => {
+  const c = collections(); const result = await c.applications.findOne({ _id: new ObjectId(req.params.id), studentEmail: req.user.email, status: "pending" });
+  if (!result) return res.status(404).json({ message: "Pending application not found" });
+  await c.applications.deleteOne({ _id: result._id }); res.json({ ok: true });
+});
 
 // app.get("/api/dashboard/tutor/applicants", verifyToken, verifyTutor, async (req, res) => {
 //   const c = collections(); const tutor = await c.users.findOne({ _id: new ObjectId(req.user._id) });
