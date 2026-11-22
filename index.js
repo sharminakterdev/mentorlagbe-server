@@ -282,7 +282,10 @@ async function seedDatabase() {
   }
 }
 
-// Health check: does not depend on database
+app.get("/", (req, res) => {
+  res.send("MentorLagbe API is running successfully!");
+});
+
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
