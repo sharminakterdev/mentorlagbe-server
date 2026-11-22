@@ -82,17 +82,8 @@ async function seedDatabase() {
 app.use(express.json({ limit:"10mb" }));
 app.use(express.urlencoded({ extended:true }));
 
-// Root Route
 app.get("/", (req, res) => {
-  res.status(200).send(`
-    <div style="font-family: Arial; text-align: center; margin-top: 100px;">
-      <h1 style="color: #16a34a;">🚀 MentorLagbe API is Running!</h1>
-      <p>Backend server deployed successfully.</p>
-      <p>Service: MentorLagbe API</p>
-      <p>Database: MongoDB</p>
-      <p>Status: Active</p>
-    </div>
-  `);
+  res.status(200).send("MentorLagbe API is Running Successfully 🚀");
 });
 
 
