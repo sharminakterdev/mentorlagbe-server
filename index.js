@@ -365,3 +365,6 @@ app.get("/api/admin/transactions", verifyToken, verifyAdmin, async (req, res) =>
 connectDatabase().then(() => {
   app.listen(PORT, () => console.log(`MentorLagbe API listening on port ${PORT}`));
 }).catch(error => { console.error(error.message); process.exit(1) });
+
+
+module.exports = app;
