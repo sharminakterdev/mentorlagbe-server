@@ -362,9 +362,40 @@ app.get("/api/admin/transactions", verifyToken, verifyAdmin, async (req, res) =>
   const c = collections(); res.json(await c.payments.find({}).sort({ paidAt: -1 }).toArray());
 });
 
-connectDatabase().then(() => {
-  app.listen(PORT, () => console.log(`MentorLagbe API listening on port ${PORT}`));
-}).catch(error => { console.error(error.message); process.exit(1) });
+let dbConnection;
 
+async function connectDatabase() {
+  if (!process.env.MONGODB_URI) {
+    throw new Error("MONGODB_URI is not configured");
+  }
+
+  if (!dbConnection) {
+    const client = new MongoClient(process.env.MONGODB_URI);
+
+    dbConnection = client.connect().then(async () => {
+      db = client.db("mentorlagbe");
+      await seedDatabase();
+
+      console.log("Connected to MongoDB");
+    }).catch((error) => {
+      dbConnection = null;
+      throw error;
+    });
+  }
+
+  await dbConnection;
+}
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDatabase();
+    next();
+  } catch (error) {
+    console.error("Database connection failed:", error);
+    res.status(500).json({
+      message: "Database connection failed"
+    });
+  }
+});
 
 module.exports = app;
